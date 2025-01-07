@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Environment Variables
+.env
+
+# IDEs and Editors
+.vscode/
+.idea/
+
+# Streamlit Files
+.streamlit/
+
+# Other
+*.log
