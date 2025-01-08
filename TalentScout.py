@@ -7,9 +7,7 @@ from dotenv import load_dotenv
 # Load environment variables from .env file
 load_dotenv()  # Call load_dotenv to load variables
 
-#################################
-# 1. Set up OpenAI and Streamlit
-#################################
+Set up OpenAI and Streamlit
 
 # Replace with your own or environment variable
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -116,6 +114,7 @@ def main():
     # Step 1: Collect User Info
    
     if not st.session_state.user_info_submitted and not st.session_state.chat_ended:
+
         st.subheader("Step 1: Provide Your Information")
         with st.form("user_info_form"):
             st.session_state.candidate_data["full_name"] = st.text_input("Full Name:")
@@ -149,6 +148,7 @@ def main():
                     st.warning("Please fill out all required fields.")
         return
     if st.session_state.chat_ended:
+        #Chat ended
         st.write("The conversation has ended. Thank you!")
         return
 
@@ -162,24 +162,28 @@ def main():
         st.session_state.chat_ended = True
         return
     if not st.session_state.current_question:
+        #Generating the first question
         if st.session_state.tech_queue:
             random.shuffle(st.session_state.tech_queue)
             st.session_state.current_question = generate_single_tech_question(st.session_state.tech_queue)
     if st.session_state.isfollowup == 0: 
+        #A question from new topic
         st.session_state.current_question = generate_single_tech_question(st.session_state.tech_queue)    
         st.markdown(f"**TalentScout**: {st.session_state.current_question}")
     else :
+        # If the chatbot is to ask a followup question
         st.session_state.current_question = generate_single_tech_question(list(st.session_state.current_tech))
         st.markdown(f"**TalentScout**: Now I will ask a question based on our previous conversation, {st.session_state.current_question}")
     user_answer = st.text_input("Your answer:", key="user_answer_widget", value="")
     if user_answer.lower() == "stop":
+        #User requested to stop the session
         st.session_state.chat_ended = True
         st.rerun()
     if st.button("Send"):
         if not user_answer.strip():
             st.warning("Please provide an answer or type STOP to end.")
             return
-
+        #Maintaning conversation history for contextually aware conversations 
         st.session_state.conversation_history.append({"role": "system", "content": st.session_state.current_question})
         st.session_state.conversation_history.append({"role": "user", "content": user_answer.strip()})
         
@@ -198,5 +202,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
